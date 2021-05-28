@@ -1,4 +1,5 @@
 import sys
+import argparse
 import os
 import torch
 import numpy as np
@@ -8,6 +9,7 @@ from synthetic import simulate_var
 from models.cmlp import cMLP, cMLPSparse, train_model_ista, train_unregularized
 os.environ["KMP_DUPLICATE_LIB_OK"]  =  "TRUE"
 
+
 def standardise(X, axis=0, keepdims=True, copy=False):
     if copy:
         X = np.copy(X)
@@ -15,8 +17,16 @@ def standardise(X, axis=0, keepdims=True, copy=False):
     X /= X.std(axis=axis, keepdims=keepdims)
     return X
 
+parser = argparse.ArgumentParser(description='Process arguments about an NBA game.')
+arser.add_argument('--event', type=int, default=0,
+                    help="""an index of the event to create the animation to
+                            (the indexing start with zero, if you index goes beyond out
+                            the total number of events (plays), it will show you the last
+                            one of the game)""")
+args = parser.parse_args()
+
 device = torch.device('cpu')
-event = 104
+event = args.event
 
 data = np.load("../SCDNNT/simulation/simulated data final/P_" + str(event) + ".npy")
 data = standardise(data)
@@ -41,7 +51,7 @@ cmlp = cMLP(X.shape[-1], lag=1, hidden=[100])
 
 # Train with ISTA
 train_loss_list = train_model_ista(
-    cmlp, X, lam=0.002, lam_ridge=1e-2, lr=5e-2, penalty='H', max_iter=50000,
+    cmlp, X, lam=0.0005, lam_ridge=1e-2, lr=5e-2, penalty='H', max_iter=50000,
     check_every=100)
 
 GC = cmlp.GC().cpu().data.numpy()

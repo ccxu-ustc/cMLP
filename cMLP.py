@@ -18,7 +18,7 @@ def standardise(X, axis=0, keepdims=True, copy=False):
 device = torch.device('cpu')
 event = 104
 
-data = np.load("./SCDNNT/simulation/simulated data final/P_" + str(event) + ".npy")
+data = np.load("../SCDNNT/simulation/simulated data final/P_" + str(event) + ".npy")
 data = standardise(data)
 X_np = data
 

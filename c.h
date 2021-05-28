@@ -12,5 +12,5 @@
 
 module load gcc/5.5.0
 
-python3 cMLP.py
+python3 cMLP.py --event 200
 
